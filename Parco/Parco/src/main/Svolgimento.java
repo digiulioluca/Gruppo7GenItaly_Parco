@@ -66,11 +66,12 @@ public class Svolgimento {
 		int guadagno1 = 0, guadagno2 = 0, guadagno3 = 0; // guadagni giornalieri giostre
 		int costoOp1 = 4, costoOp2 = 2, costoOp3 = 5; // costi operativi per giro
 		int costiOperativiTot = 0; // contenitore costi operativi totali
-		int guadTot = 0, guadNetto = 0; // contenitori dei guadagni (il primo tiene conto dei costi operativi, il
+		int guadNetto = 0, guadLordo = 0; // contenitori dei guadagni (il primo tiene conto dei costi operativi, il
 										// secondo no)
 		float soddisfatti = 0; // due variabili numeriche decimali per il calcolo della percentuale dei
 								// visitatori soddisfatti
 		float percSod = 0;
+		
 		// APERTURA SCANNER
 		Scanner scanner = new Scanner(System.in);
 
@@ -88,11 +89,11 @@ public class Svolgimento {
 				 * effettuata)
 				 */
 				visitTot = 0;
-				guadTot = 0;
+				guadNetto = 0;
 				costiOperativiTot = 0;
 				soddisfatti = 0;
 				percSod = 0;
-				guadNetto = 0;
+				guadLordo = 0;
 				guadagno1 = 0;
 				guadagno2 = 0;
 				guadagno3 = 0;
@@ -130,12 +131,12 @@ public class Svolgimento {
 					// comandi
 					// SELEZIONE MENU' SIMULAZIONE
 					System.out.println("Hai a disposizione: € " + budget + ".");
-					System.out.println(
-							"Fila giostra ROSSA: " + visitGiostra1 + "\nFila giostra BLU: " + visitGiostra2 + "\nFila giostra VERDE: " + visitGiostra3);
+					System.out.println("Fila giostra ROSSA: " + visitGiostra1 + "\nFila giostra BLU: " + visitGiostra2
+							+ "\nFila giostra VERDE: " + visitGiostra3);
 
 					// scelta attrazione
-					System.out
-							.println("Scegli una tra le tre attrazioni disponibili: " + "\n1)ROSSA		2)BLU		3)VERDE");
+					System.out.println(
+							"Scegli una tra le tre attrazioni disponibili: " + "\n1)ROSSA		2)BLU		3)VERDE");
 					sceltaParco = scanner.nextInt();
 
 					// ingresso nelle singole attrazioni
@@ -158,15 +159,16 @@ public class Svolgimento {
 							 */
 							if (visitGiostra1 >= capienza1) {
 								budget -= prezzoGiostra1;
-								giriEff1 += (visitGiostra1 / capienza1);
 								System.out.println("Acquisto biglietto in corso, attendere" + " l'inizio del giro...");
 								/*
 								 * while per calcolare il numero di giri effettuato (in base alla coda) e il
 								 * guadagno della giostra
 								 */
 								while ((visitGiostra1 / capienza1) > 0) {
+									giriEff1++;
 									visitGiostra1 -= capienza1;
-									guadagno1 += (prezzoGiostra1 * capienza1) - (costoOp1 * (giriEff1));
+									guadagno1 += (prezzoGiostra1 * capienza1) - costoOp1;
+									costiOperativiTot += costoOp1;
 								}
 								// opzioni per ritornare indietro al menù SIMULAZIONE
 								System.out.println(
@@ -188,9 +190,13 @@ public class Svolgimento {
 							 * sulla giostra (per motivi di budget o tempi d'attesa), i calcoli sui guadagni
 							 * e i giri effettuati vengono fatti lo stesso
 							 */
-							giriEff1 += (visitGiostra1 / capienza1);
-							if (guadagno1 == 0) {
-								guadagno1 += (prezzoGiostra1 * capienza1) - (costoOp1 * (giriEff1));
+							while ((visitGiostra1 / capienza1) > 0) {
+								giriEff1++;
+								visitGiostra1 -= capienza1;
+								//if (guadagno1 == 0) {
+									guadagno1 += (prezzoGiostra1 * capienza1) - costoOp1;
+								//}
+									costiOperativiTot += costoOp1;
 							}
 
 							// scelta per proseguire la simulazione o uscire e tornare al menù principale
@@ -205,7 +211,7 @@ public class Svolgimento {
 						 * effettuati. Il risultato lo sommiamo al contenitore dei costi operativi
 						 * totali
 						 */
-						costiOperativiTot += (costoOp1 * giriEff1);
+						//costiOperativiTot += (costoOp1 * giriEff1);
 
 						/*
 						 * svuotiamo la fila e reindirizziamo le persone che non riescono a effettuare
@@ -214,14 +220,12 @@ public class Svolgimento {
 						 */
 						visitGiostra2 += (visitGiostra1 % capienza1);
 						visitTot2 += (visitGiostra1 % capienza1);
-						
 
 						visitGiostra1 = 0;
 
 						break;
 					case 2:
-						
-						
+
 						coda2 += tempoGiro2 * (visitGiostra2 / capienza2);
 						if (budget >= prezzoGiostra2 && tolleranza >= coda2) {
 							System.out.println("Giostra BLU\n" + "Tempo d'attesa: " + coda2
@@ -229,12 +233,14 @@ public class Svolgimento {
 
 							if (visitGiostra2 >= capienza2) {
 								budget -= prezzoGiostra2;
-								giriEff2 += (visitGiostra2 / capienza2);
 								System.out.println("Acquisto biglietto in corso, attendere" + " l'inizio del giro...");
 								while ((visitGiostra2 / capienza2) > 0) {
+									giriEff2++;
 									visitGiostra2 -= capienza2;
-									guadagno2 += (prezzoGiostra2 * capienza2) - (costoOp2 * (giriEff2));
+									guadagno2 += (prezzoGiostra2 * capienza2) - costoOp2;
+									costiOperativiTot += costoOp2;
 								}
+								
 								System.out.println(
 										"Giro concluso. Premi 1 per continuare o un altro numero per uscire dalla simulazione: ");
 								continuaSim = scanner.nextInt();
@@ -247,21 +253,28 @@ public class Svolgimento {
 							}
 
 						} else {
-							giriEff2 += (visitGiostra2 / capienza2);
-							if (guadagno2 == 0) {
-								guadagno2 += (prezzoGiostra2 * capienza2) - (costoOp2 * (giriEff2));
+							while ((visitGiostra2 / capienza2) > 0) {
+								giriEff2++;
+								visitGiostra2 -= capienza2;
+								//if (guadagno2 == 0) {
+									guadagno2 += (prezzoGiostra2 * capienza2) - costoOp2;
+								//}
+									costiOperativiTot += costoOp2;
 							}
+							
 							System.out.println("Budget o tolleranza non sufficiente per accedere alla giostra.");
 							System.out
 									.println("Premi 1 per continuare o un altro numero per uscire dalla simulazione: ");
 							continuaSim = scanner.nextInt();
 							sceltaParco = 0;
 						}
-
-						costiOperativiTot += (costoOp2 * giriEff2);
+						
+						
+						//costiOperativiTot += (costoOp2 * giriEff2);
+						
 						visitGiostra3 += (visitGiostra2 % capienza2);
 						visitTot2 -= (visitGiostra2 % capienza2);
-					
+
 						visitTot3 += (visitGiostra2 % capienza2);
 
 						visitGiostra2 = 0;
@@ -274,11 +287,12 @@ public class Svolgimento {
 									+ " minuti. Persone in fila: " + visitGiostra3 + ". Costo: " + prezzoGiostra3);
 							if (visitGiostra3 >= capienza3) {
 								budget -= prezzoGiostra3;
-								giriEff3 += (visitGiostra3 / capienza3);
 								System.out.println("Acquisto biglietto in corso, attendere" + " l'inizio del giro...");
 								while ((visitGiostra3 / capienza3) > 0) {
+									giriEff3++;
 									visitGiostra3 -= capienza3;
-									guadagno3 += (prezzoGiostra3 * capienza3) - (costoOp3 * (giriEff3));
+									guadagno3 += (prezzoGiostra3 * capienza3) - costoOp3;
+									costiOperativiTot += costoOp3;
 								}
 								System.out.println(
 										"Giro concluso. Premi 1 per continuare o un altro numero per uscire dalla simulazione: ");
@@ -293,9 +307,13 @@ public class Svolgimento {
 							}
 
 						} else {
-							giriEff3 += (visitGiostra3 / capienza3);
-							if (guadagno3 == 0) {
-								guadagno3 += (prezzoGiostra3 * capienza3) - (costoOp3 * (giriEff3));
+							while ((visitGiostra3 / capienza3) > 0) {
+								giriEff3++;
+								visitGiostra3 -= capienza3;
+								//if (guadagno3 == 0) {
+									guadagno3 += (prezzoGiostra3 * capienza3) - costoOp3;
+								//}
+									costiOperativiTot += costoOp3;
 							}
 							System.out.println("Budget o tolleranza non sufficiente per accedere alla giostra.");
 							System.out
@@ -304,7 +322,7 @@ public class Svolgimento {
 							sceltaParco = 0;
 						}
 
-						costiOperativiTot += (costoOp3 * giriEff3);
+						//costiOperativiTot = (costoOp3 * giriEff3);
 						visitTot3 -= (visitGiostra3 % capienza3);
 						visitGiostra3 = 0;
 
@@ -338,16 +356,17 @@ public class Svolgimento {
 				 * delle singole giostre, moltiplicati nel do-while della simulazione ai giri
 				 * effettuati)
 				 */
-				guadTot = guadagno1 + guadagno2 + guadagno3;
+				guadNetto = guadagno1 + guadagno2 + guadagno3;
 
+				
 				// stampa dei costi operativi totali
 				System.out.println("Totale dei costi operativi: € " + costiOperativiTot + ".");
 
 				// calcolo sul guadagno netto (e stampa)
-				guadNetto = guadTot + costiOperativiTot;
-				System.out.println("\nGuadagno lordo: € " + guadNetto + ".");
+				guadLordo = guadNetto + costiOperativiTot;
+				System.out.println("\nGuadagno lordo: € " + guadLordo + ".");
 				// stampa guadagni totali del parco
-				System.out.println("\nGuadagno netto: € " + guadTot + ".\n\nAttrazione più visitata: ");
+				System.out.println("\nGuadagno netto: € " + guadNetto + ".\n\nAttrazione più visitata: ");
 
 				// CALCOLO PERCENTUALE VISITATORI SODDISFATTI:
 
@@ -397,11 +416,11 @@ public class Svolgimento {
 				 * simulazione successiva
 				 */
 				visitTot = 0;
-				guadTot = 0;
+				guadNetto = 0;
 				costiOperativiTot = 0;
 				soddisfatti = 0;
 				percSod = 0;
-				guadNetto = 0;
+				guadLordo = 0;
 				guadagno1 = 0;
 				guadagno2 = 0;
 				guadagno3 = 0;
